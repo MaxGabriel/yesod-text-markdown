@@ -11,18 +11,19 @@ import Yesod.Form
 import Yesod.Core (HandlerSite)
 import Yesod.Core.Widget
 import Yesod.Persist
-import Data.Text (Text)
+import Data.Text (Text, pack)
 import Data.Text.Lazy (toStrict, fromStrict)
 import Text.Markdown (Markdown (Markdown))
 import Database.Persist.Sql
 import Control.Applicative ((<$>))
 import Control.Monad (mzero)
 import Data.Aeson
+import Data.Typeable
 
 instance PersistField Markdown where
   toPersistValue (Markdown t) = PersistText $ toStrict t
   fromPersistValue (PersistText t) = Right $ Markdown $ fromStrict t
-  fromPersistValue _ = Left "Not a PersistText value"
+  fromPersistValue wrongValue = Left $ pack $ "The value " ++ show wrongValue ++ " has type " ++ (show $ typeOf wrongValue) ++ " when PersistText was expected"
 
 instance PersistFieldSql Markdown where
     sqlType _ = SqlString
