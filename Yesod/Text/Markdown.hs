@@ -5,6 +5,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 module Yesod.Text.Markdown where
 
+import Prelude
 import Yesod.Core (RenderMessage)
 import Text.Hamlet (hamlet)
 import Yesod.Form
@@ -18,12 +19,11 @@ import Database.Persist.Sql
 import Control.Applicative ((<$>))
 import Control.Monad (mzero)
 import Data.Aeson
-import Data.Typeable
 
 instance PersistField Markdown where
   toPersistValue (Markdown t) = PersistText $ toStrict t
   fromPersistValue (PersistText t) = Right $ Markdown $ fromStrict t
-  fromPersistValue wrongValue = Left $ pack $ "The value " ++ show wrongValue ++ " has type " ++ (show $ typeOf wrongValue) ++ " when PersistText was expected"
+  fromPersistValue wrongValue = Left $ pack $ "Yesod.Text.Markdown: When attempting to create Markdown from PersistValue, received " ++ show wrongValue ++ " when a value of type PersistText was expected."
 
 instance PersistFieldSql Markdown where
     sqlType _ = SqlString
